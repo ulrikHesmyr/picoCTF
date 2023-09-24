@@ -9,7 +9,7 @@ I decided to try something noone else has before. I made a bot to automatically 
 
 ### So we begin
 
-1. We open file, connect in our shell and read hint to see where to look for our flag. 
+1. We open the c-file, connect in our shell and read hint to see where to look for our flag. 
 
   What we see is that our flag is in a separate file on the server and is beaing read and stored in the variable ```api_buf```.
 
@@ -25,7 +25,7 @@ I decided to try something noone else has before. I made a bot to automatically 
 
   ![Hint says: Okay, maybe I'd believe you if you find my API key.](https://raw.githubusercontent.com/ulrikHesmyr/picoCTF/main/picoGym/pwn/stonks/images/hint.png)
 
-  And we find the snippet that gets input from the user:
+  And we find the snippet that the hint refers to:
 
   ![Code snippet of functions that stores user input in variable, and print the exact variable right back to us](https://raw.githubusercontent.com/ulrikHesmyr/picoCTF/main/picoGym/pwn/stonks/images/bingo.png)
 
@@ -36,11 +36,11 @@ I decided to try something noone else has before. I made a bot to automatically 
   - printf() function that writes your exact input, right back at us.
 
   What we know (or should know):
-  - %s print out strings, %i print out int AND MOST IMPORTANT %x print out hexadecimal.
-  - printf can print out all the data in our stack by requesting it, using a bunch of format specifiers (i.e %s, %c, %f etc.)(dont know what this consept is called)
+  - printf() in combination with format specifiers can print out variables from the stack. I.e. %s print out strings, %i print out int AND MOST IMPORTANT %x print out hexadecimal.
+  - By using a bunch of format specifiers, we will be able to print out all the variables stored in the stack (i.e %s, %c, %f etc.)
 
   And THIS IS GOOD, because:
-  - If we, instead of sending a "API token" as it requests, we send a string constisting of many %x, we will then make the process that runs on the server, **to print out whatever is stored in the stack**, which is in this case our flag. (use hiphens in between because our variable ```user_buf``` is a char pointer and not a string)
+  - If we, instead of sending a "API token" as it requests, we send a string containing our format specifiers, we will then make the process that runs on the server, **to print out whatever is stored in the stack**, which is in this case our flag. (use hiphens in between because our variable ```user_buf``` is a char pointer and not a string)
 
   Our input:
 
@@ -93,8 +93,8 @@ for i in ourEncodedFlag.split('-'):
 print(s)    #output: qpicoCTF{I_l05t_4ll_my_m0n3y_6045d60d}J@t
   ```
 
-  4. Copy the python code above and run it
-   
+  4. Copy the python code above, paste it into a python file (.py) on your computer and run it
+
   This gives us - in our case - the flag:
 
   ```
